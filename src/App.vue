@@ -1,4 +1,22 @@
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+const keyword = ref("");
+const router = useRouter();
+function handleSearch() {
+  // router.push(`/search?keyword=${keyword.value}`);
+  if (keyword.value) {
+    router.push({
+      path: "/search",
+      query: { keyword: keyword.value },
+    });
+  } else {
+  }
+
+  // search?key=abc -> query
+  // movie/1 -> param
+}
+</script>
 
 <template>
   <div>
@@ -13,8 +31,10 @@
         <li><router-link to="/tvshows">TV Shows</router-link></li>
         <!-- Search -->
         <div class="search-container">
-          <input type="text" />
-          <button><i class="fa-solid fa-magnifying-glass"></i></button>
+          <input type="text" v-model="keyword" />
+          <button @click="handleSearch">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
         </div>
       </nav>
     </header>

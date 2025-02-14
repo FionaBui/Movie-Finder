@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 
 const props = defineProps(["pageRange", "totalPages", "fetchData"]);
 const emit = defineEmits(["fetchData"]);
@@ -9,7 +9,21 @@ console.log("init totalPages", totalPages);
 
 const currentPage = ref(1);
 const start = ref(1);
-const end = ref(pageRange);
+const end = computed(() => {
+  let result = pageRange;
+  if (start.value + pageRange - 1 > totalPages) {
+    result = totalPages - start.value + 1;
+  }
+  return result;
+});
+
+// watch(start, () => {
+//   if (start.value + pageRange - 1 > totalPages) {
+//     end.value = totalPages - start.value + 1;
+//   } else {
+//     end.value = pageRange;
+//   }
+// });
 
 const handleNextPage = () => {
   currentPage.value++;
@@ -39,18 +53,11 @@ watch(currentPage, () => {
 });
 
 watch(start, () => {
-  console.log("start change:");
-  console.log("start:", start.value);
-  console.log("totalPages:", totalPages);
-  console.log("pageRange:", pageRange);
   if (start.value + pageRange - 1 > totalPages) {
     end.value = totalPages - start.value + 1;
   } else {
     end.value = pageRange;
   }
-});
-watch(end, () => {
-  console.log("end:", end.value);
 });
 </script>
 

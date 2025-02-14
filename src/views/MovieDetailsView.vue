@@ -16,19 +16,27 @@ const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 console.log(movie);
 
 const fetchMovieDetails = async (movieId) => {
+  console.log("begin detail");
   const movieResponse = await axios.get(
     `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`
   );
+  console.log("end detail");
+
   movie.value = movieResponse.data;
   // // Hämta credits API
+  console.log("begin credit");
   const creditResponse = await axios.get(
     `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`
   );
+  console.log("end credit");
+
   credits.value = creditResponse.data;
   // Hämta similar API
+  console.log("begin similar");
   const similarResponse = await axios.get(
     `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${apiKey}`
   );
+  console.log("end similar");
   similarMovies.value = similarResponse.data.results.slice(0, 8);
   console.log(similarMovies.value);
 };
@@ -109,7 +117,7 @@ onMounted(() => {
     </div>
   </div>
   <div>
-    <h2>You may also like...</h2>
+    <h2 v-if="similarMovies.length > 0">You may also like...</h2>
     <div v-if="similarMovies.length > 0" class="similar-movies-container">
       <div
         v-for="similar in similarMovies"
