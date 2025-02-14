@@ -1,19 +1,31 @@
 <script setup>
+// Tar emot en prop med filmdata
 defineProps(["movie"]);
 </script>
 
 <template>
-  <!-- <router-link :to="`/movie/${movie.id}`"> -->
-  <img
-    :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
-    :alt="movie.title || movie.name"
-    class="movie-image"
-  />
-  <h4>
-    {{ movie.title || movie.name }}
-  </h4>
-  <p>Release Date: {{ movie.release_date || movie.first_air_date }}</p>
-  <!-- </router-link> -->
+  <!-- Container for movie-card -->
+  <div class="movies-content">
+    <div v-if="movie.poster_path">
+      <img
+        :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
+        :alt="movie.title || movie.name"
+        class="movie-image"
+      />
+    </div>
+    <!-- Om ingen bild finns, visa en standardbild -->
+    <div v-else>
+      <img
+        src="/assets/No_Image_Available.jpg"
+        alt="No Image"
+        class="movie-image"
+      />
+    </div>
+    <h4>
+      {{ movie.title }}
+    </h4>
+    <p>Release Date: {{ movie.release_date }}</p>
+  </div>
 </template>
 
 <style>
@@ -31,6 +43,5 @@ a {
 }
 .movie-image {
   width: 100%;
-  height: auto;
 }
 </style>

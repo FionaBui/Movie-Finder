@@ -3,11 +3,11 @@ import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 import { useRoute } from "vue-router";
 
-// Hämta film-ID från URL
+// Extract the movie ID from the URL
 const route = useRoute();
 const movieId = route.params.id;
 
-// Skapa en variabel för filmdata
+// Define reactive variables to store movie details
 const movie = ref(null);
 const credits = ref({ cast: [], crew: [] });
 const similarMovies = ref([]);
@@ -15,6 +15,7 @@ const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 
 console.log(movie);
 
+// Function to fetch movie details from the API
 const fetchMovieDetails = async (movieId) => {
   console.log("begin detail");
   const movieResponse = await axios.get(
@@ -23,7 +24,7 @@ const fetchMovieDetails = async (movieId) => {
   console.log("end detail");
 
   movie.value = movieResponse.data;
-  // // Hämta credits API
+  // Fetch movie credits
   console.log("begin credit");
   const creditResponse = await axios.get(
     `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`
@@ -31,16 +32,16 @@ const fetchMovieDetails = async (movieId) => {
   console.log("end credit");
 
   credits.value = creditResponse.data;
-  // Hämta similar API
+  // Fetch similar movies
   console.log("begin similar");
   const similarResponse = await axios.get(
     `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${apiKey}`
   );
   console.log("end similar");
-  similarMovies.value = similarResponse.data.results.slice(0, 8);
+  similarMovies.value = similarResponse.data.results.slice(0, 8); // Store only the first 8 similar movies
   console.log(similarMovies.value);
 };
-
+// Watches for changes in `route.params.id`. When the ID changes, it logs the new value and fetches movie details.
 watch(
   () => route.params.id,
   (newMovieId) => {
@@ -49,11 +50,9 @@ watch(
   }
 );
 
-// Skapa en variabel för filmdata
-
+// Fetch movie details when the component is mounted
 onMounted(() => {
   console.log("mounted");
-
   fetchMovieDetails(movieId);
 });
 </script>
@@ -61,7 +60,7 @@ onMounted(() => {
   <div v-if="movie">
     <div class="container">
       <h1>{{ movie.title }}</h1>
-      <!-- image -->
+      <!-- Movie Image and Information -->
       <div class="movie-content">
         <img
           :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
@@ -85,12 +84,11 @@ onMounted(() => {
               {{ movie.genres.map((genre) => genre.name).join(",") }}
             </p>
             <p><strong>Primiere:</strong> {{ movie.release_date }}</p>
-
             <p><strong>Overview:</strong> {{ movie.overview }}</p>
             <p><strong>Duration:</strong> {{ movie.runtime }} min</p>
             <p><strong>Rating:</strong> {{ movie.vote_average.toFixed(1) }}</p>
           </div>
-          <!-- Cast -->
+          <!-- Casts -->
           <div>
             <p><strong>Cast</strong></p>
             <div class="cast-container" v-if="credits.cast.length > 0">
@@ -100,11 +98,7 @@ onMounted(() => {
                 class="cast-card"
               >
                 <img
-                  :src="
-                    actor.profile_path
-                      ? `https://image.tmdb.org/t/p/w185${actor.profile_path}`
-                      : 'https://via.placeholder.com/185'
-                  "
+                  :src="`https://image.tmdb.org/t/p/w185${actor.profile_path}`"
                   :alt="actor.name"
                 />
                 <p>{{ actor.name }} as {{ actor.character }}</p>
@@ -116,7 +110,8 @@ onMounted(() => {
       </div>
     </div>
   </div>
-  <div>
+  <!-- Similar Movies Section -->
+  <div class="container">
     <h2 v-if="similarMovies.length > 0">You may also like...</h2>
     <div v-if="similarMovies.length > 0" class="similar-movies-container">
       <div
@@ -125,19 +120,21 @@ onMounted(() => {
         class="similar-movie-card"
       >
         <RouterLink :to="`/movie/${similar.id}`">
-          <img
-            :src="
-              similar.poster_path
-                ? `https://image.tmdb.org/t/p/w185${similar.poster_path}`
-                : 'https://via.placeholder.com/185'
-            "
-            :alt="similar.title"
-          />
+          <div v-if="similar.poster_path">
+            <img
+              :src="`https://image.tmdb.org/t/p/w185${similar.poster_path}`"
+              :alt="similar.title"
+              class="similar-movie-image"
+            />
+          </div>
+          <div v-else>
+            <img src="/assets/No_Image_Available.jpg" alt="No Image" />
+          </div>
         </RouterLink>
         <p>{{ similar.title }}</p>
       </div>
     </div>
-    <div v-else>No similar movies found.</div>
+    <h2 v-else>No similar movies found.</h2>
   </div>
 </template>
 <style scoped>
@@ -151,14 +148,14 @@ p {
 .movie-content {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* Đảm bảo các phần tử thẳng hàng */
-  gap: 30px; /* Tạo khoảng cách giữa ảnh và thông tin */
-  padding: 10px 20px;
-  margin: 10px 20px;
+  align-items: flex-start;
+  gap: 30px;
+  /* padding: 10px 20px;
+  margin: 10px 20px; */
 }
 
 .movie-content img {
-  width: 400px; /* Đặt kích thước cố định cho ảnh */
+  width: 400px;
   height: auto;
   border-radius: 10px;
 }
@@ -186,6 +183,9 @@ p {
 .cast-card p {
   font-size: 14px;
 }
+.container {
+  margin: 0 30px;
+}
 .similar-movies-container {
   display: flex;
   flex-wrap: wrap;
@@ -195,23 +195,23 @@ p {
 }
 
 .similar-movie-card {
-  width: 120px;
   text-align: center;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
+  width: 200px;
+  height: auto;
 }
 
 .similar-movie-card:hover {
   transform: scale(1.1);
 }
 
-.similar-movie-card img {
-  width: 100%;
+.similar-movie-image {
   border-radius: 5px;
+  width: 100%;
 }
-
 .similar-movie-card p {
-  font-size: 14px;
+  font-size: 16px;
   margin-top: 5px;
 }
 </style>

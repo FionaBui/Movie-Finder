@@ -1,18 +1,17 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import CardMovie from "../components/CardMovie.vue";
 import Pagination from "../components/Pagination.vue";
 
-//Variabler för att lagra filmdata
+//Variables to store movie data
 const movies = ref([]);
-const tvShows = ref([]);
 const totalPages = ref(0);
-const PAGE_RANGE = 7;
+const PAGE_RANGE = 7; // Number of pages to display in pagination
 
 const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 
-// Funktion för att hämta data från API
+// Function to fetch movie data from the API
 const fetchMovies = async (page) => {
   const response = await axios.get(
     `https://api.themoviedb.org/3/movie/now_playing?page=${page}&api_key=${apiKey}`
@@ -21,21 +20,9 @@ const fetchMovies = async (page) => {
   totalPages.value = response.data.total_pages;
 };
 
-// Funktion för att hämta data från API
-const fetchTvShows = async (page) => {
-  const response = await axios.get(
-    `https://api.themoviedb.org/3/tv/popular?api_key=${apiKey}`
-  );
-  tvShows.value = response.data.results;
-  console.log(tvShows.value);
-
-  totalPages.value = response.data.total_pages;
-};
-
-// Hämta filmer när komponenten laddas
+// When the component is mounted, `fetchMovies(1)` is called to load the first page of movies.
 onMounted(() => {
   fetchMovies(1);
-  fetchTvShows();
 });
 </script>
 <template>
@@ -50,6 +37,7 @@ onMounted(() => {
         </router-link>
       </div>
     </div>
+    <!-- Pagination Component -->
     <Pagination
       :totalPages="totalPages"
       :key="totalPages"
@@ -57,24 +45,6 @@ onMounted(() => {
       @fetchData="fetchMovies"
     />
   </div>
-  <!-- Tv shows -->
-  <!-- <div>
-    <h1>Tv-Shows</h1>
-    <div v-if="tvShows.length === 0">Loading...</div>
-    <div v-else class="movie-container">
-      <div v-for="series in tvShows" :key="series.id" class="movie-card">
-        <router-link :to="`/movie/${series.id}`">
-          <CardMovie :movie="series" />
-        </router-link>
-      </div>
-    </div>
-    <Pagination
-      :totalPages="totalPages"
-      :key="totalPages"
-      :pageRange="PAGE_RANGE"
-      @fetchData="fetchMovies"
-    />
-  </div> -->
 </template>
 <style>
 h1 {
@@ -85,13 +55,13 @@ h1 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  padding: 20px;
+  /* padding: 20px; */
 }
 .movie-card {
   width: calc(100% / 3 - 30px);
   text-align: center;
   /* border: 1px solid; */
-  border-radius: 10px;
+  /* border-radius: 10px; */
   overflow: hidden;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   background: none;

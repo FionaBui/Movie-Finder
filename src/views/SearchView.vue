@@ -5,18 +5,17 @@ import { useRoute } from "vue-router";
 import CardMovie from "../components/CardMovie.vue";
 import Pagination from "../components/Pagination.vue";
 
-//Variabler för att lagra filmdata
+//variables to store movie data
 const items = ref([]);
 const totalPages = ref(0);
 const PAGE_RANGE = 10;
 
-// Hämta keyword från URL
+// Get the keyword from the URL
 const route = useRoute();
-const keywordId = ref(route.query.keyword);
-
+const keywordId = ref(route.query.keyword); // Stores the search query
 const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 
-// Funktion för att hämta data från API
+// Function to fetch movies based on the search keyword
 const fetchItems = async (page) => {
   const response = await axios.get(
     `https://api.themoviedb.org/3/search/movie?query=${keywordId.value}&page=${page}&api_key=${apiKey}`
@@ -24,19 +23,19 @@ const fetchItems = async (page) => {
   items.value = response.data.results; // Sparar filmer i movies-arrayen
   totalPages.value = response.data.total_pages;
 };
-
+// Watch for changes in the keyword from the route and update it.When the keyword changes, it updates `keywordId.value` with the new value
 watch(
   () => route.query.keyword,
   (newKeyword) => {
     keywordId.value = newKeyword;
   }
 );
-
+// Watch for changes in the keyword and fetch new search results
 watch(keywordId, () => {
   fetchItems(1);
 });
 
-// Hämta filmer när komponenten laddas
+// Fetch search results when the component is mounted
 onMounted(() => {
   fetchItems(1);
 });
@@ -44,21 +43,29 @@ onMounted(() => {
 <template>
   <!-- Movies -->
   <div>
-    <h1>Search results with keyword : {{ keywordId }}</h1>
-    <div v-if="items.length === 0">Loading...</div>
-    <div v-else class="movie-container">
-      <div v-for="movie in items" :key="movie.id" class="movie-card">
-        <router-link :to="`/movie/${movie.id}`">
-          <CardMovie :movie="movie" />
-        </router-link>
+    <!-- Display message if no results are found -->
+    <div v-if="keywordId === '' || items.length === 0">
+      <h1>No results found</h1>
+    </div>
+    <div v-else>
+      <h1>Search results with keyword : {{ keywordId }}</h1>
+      <div class="movie-container">
+        <div v-for="movie in items" :key="movie.id" class="movie-card">
+          <router-link :to="`/movie/${movie.id}`">
+            <CardMovie :movie="movie" />
+          </router-link>
+        </div>
       </div>
     </div>
-    <Pagination
-      :totalPages="totalPages"
-      :key="totalPages"
-      :pageRange="PAGE_RANGE"
-      @fetchData="fetchItems"
-    />
+    <!-- Show pagination only if there are results -->
+    <div v-if="keywordId && items.length !== 0">
+      <Pagination
+        :totalPages="totalPages"
+        :key="totalPages"
+        :pageRange="PAGE_RANGE"
+        @fetchData="fetchItems"
+      />
+    </div>
   </div>
 </template>
 <style>

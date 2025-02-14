@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 const keyword = ref("");
 const router = useRouter();
 function handleSearch() {
-  // router.push(`/search?keyword=${keyword.value}`);
+  router.push(`/search?keyword=${keyword.value}`);
   if (keyword.value) {
     router.push({
       path: "/search",
@@ -12,9 +12,6 @@ function handleSearch() {
     });
   } else {
   }
-
-  // search?key=abc -> query
-  // movie/1 -> param
 }
 </script>
 
@@ -45,18 +42,17 @@ function handleSearch() {
 body {
   background-color: black;
   color: white;
-  margin: 0;
-  padding: 0;
+  margin: 50px 100px;
   font-family: "Quicksand", serif;
-  box-sizing: border-box;
+  overflow: auto;
 }
 
-#app {
+/* #app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
+} */
 h1 {
   color: #f9ab00;
 }
@@ -83,11 +79,12 @@ nav {
 nav li {
   list-style-type: none;
   color: white;
+  font-size: 20px;
   text-decoration: none;
   margin: 0 15px;
 }
 .header-logo {
-  width: 200px;
+  width: 250px;
 }
 /* Search */
 .search-container {
