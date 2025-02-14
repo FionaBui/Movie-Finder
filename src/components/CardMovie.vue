@@ -3,17 +3,17 @@ defineProps(["movie"]);
 </script>
 
 <template>
-  <router-link :to="`/movie/${movie.id}`">
-    <img
-      :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
-      :alt="movie.title"
-      class="movie-image"
-    />
-    <h4>
-      {{ movie.title }}
-    </h4>
-    <p>Release Date: {{ movie.release_date }}</p>
-  </router-link>
+  <!-- <router-link :to="`/movie/${movie.id}`"> -->
+  <img
+    :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
+    :alt="movie.title || movie.name"
+    class="movie-image"
+  />
+  <h4>
+    {{ movie.title || movie.name }}
+  </h4>
+  <p>Release Date: {{ movie.release_date || movie.first_air_date }}</p>
+  <!-- </router-link> -->
 </template>
 
 <style>

@@ -3,6 +3,7 @@
 <template>
   <div>
     <header class="header-content">
+      <!-- logo -->
       <router-link to="/"
         ><img src="../assets/Movie.jpg" alt="logo" class="header-logo"
       /></router-link>
@@ -10,6 +11,11 @@
         <li><router-link to="/">Home</router-link></li>
         <li><router-link to="/movies">Movies</router-link></li>
         <li><router-link to="/tvshows">TV Shows</router-link></li>
+        <!-- Search -->
+        <div class="search-container">
+          <input type="text" />
+          <button><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
       </nav>
     </header>
     <router-view></router-view>
@@ -31,6 +37,13 @@ body {
   flex-direction: column;
   align-items: center;
 }
+h1 {
+  color: #f9ab00;
+}
+p {
+  font-size: 18px;
+}
+/* Header */
 .header-content {
   display: flex;
   flex-direction: row;
@@ -39,16 +52,12 @@ body {
   background: #000000;
   color: white;
 }
-h1 {
-  color: #f9ab00;
-}
-p {
-  font-size: 18px;
-}
+
 nav {
   display: flex;
+  align-items: center;
   padding: 10px;
-  text-align: center;
+  margin-right: 30px;
 }
 
 nav li {
@@ -59,5 +68,23 @@ nav li {
 }
 .header-logo {
   width: 200px;
+}
+/* Search */
+.search-container {
+  border: 1px;
+  background: #2c2c2c;
+}
+.search-container input {
+  width: 150px;
+  height: 20px;
+  padding: 5px 15px;
+  background: transparent;
+  color: aliceblue;
+  border: 2px solid transparent;
+  font-size: 16px;
+}
+.search-container i {
+  font-size: 20px;
+  padding: 5px 15px;
 }
 </style>
