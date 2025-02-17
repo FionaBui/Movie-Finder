@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "./views/HomeView.vue";
 import MovieDetailsView from "./views/MovieDetailsView.vue";
 import SearchView from "./views/SearchView.vue";
-// import TvShowsView from "./views/TvShowsView.vue";
+import LoginView from "./views/LoginView.vue";
 
 // Defining routes
 export default createRouter({
@@ -11,6 +11,6 @@ export default createRouter({
     { path: "/", component: HomeView },
     { path: "/movie/:id", component: MovieDetailsView },
     { path: "/search", component: SearchView },
-    // { path: "/tvshows", component: TvShowView },
+    { path: "/login", component: LoginView },
   ],
 });

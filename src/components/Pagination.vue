@@ -1,7 +1,10 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 // Get props from the parent component
-const props = defineProps(["pageRange", "totalPages", "fetchData"]);
+const props = defineProps({
+  pageRange: Number,
+  totalPages: Number,
+});
 // Defines events that can be emitted to the parent component
 const emit = defineEmits(["fetchData"]);
 // Extracts values from props

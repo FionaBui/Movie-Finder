@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import api from "../api";
 import { useRoute } from "vue-router";
 
 // Extract the movie ID from the URL
@@ -11,32 +11,25 @@ const movieId = route.params.id;
 const movie = ref(null);
 const credits = ref({ cast: [], crew: [] });
 const similarMovies = ref([]);
-const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 
 console.log(movie);
 
 // Function to fetch movie details from the API
 const fetchMovieDetails = async (movieId) => {
   console.log("begin detail");
-  const movieResponse = await axios.get(
-    `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`
-  );
+  const movieResponse = await api.get(`movie/${movieId}`);
   console.log("end detail");
 
   movie.value = movieResponse.data;
   // Fetch movie credits
   console.log("begin credit");
-  const creditResponse = await axios.get(
-    `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${apiKey}`
-  );
+  const creditResponse = await api.get(`movie/${movieId}/credits`);
   console.log("end credit");
 
   credits.value = creditResponse.data;
   // Fetch similar movies
   console.log("begin similar");
-  const similarResponse = await axios.get(
-    `https://api.themoviedb.org/3/movie/${movieId}/similar?api_key=${apiKey}`
-  );
+  const similarResponse = await api.get(`movie/${movieId}/similar`);
   console.log("end similar");
   similarMovies.value = similarResponse.data.results.slice(0, 8); // Store only the first 8 similar movies
   console.log(similarMovies.value);
@@ -128,7 +121,11 @@ onMounted(() => {
             />
           </div>
           <div v-else>
-            <img src="/assets/No_Image_Available.jpg" alt="No Image" />
+            <img
+              src="/assets/No_Image_Available.jpg"
+              alt="No Image"
+              class="similar-movie-image default"
+            />
           </div>
         </RouterLink>
         <p>{{ similar.title }}</p>
@@ -139,15 +136,16 @@ onMounted(() => {
 </template>
 <style scoped>
 h1 {
-  text-align: center;
+  text-align: left;
   color: #f9ab00;
+  padding: 20px 0;
 }
 p {
   font-size: 18px;
 }
 .movie-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   align-items: flex-start;
   gap: 30px;
   /* padding: 10px 20px;
@@ -155,14 +153,14 @@ p {
 }
 
 .movie-content img {
-  width: 400px;
+  width: 40%;
   height: auto;
   border-radius: 10px;
 }
 
 .movie-info {
   flex: 1;
-  max-width: 600px;
+  max-width: 70%;
 }
 
 .cast-container {
@@ -199,17 +197,25 @@ p {
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
   width: 200px;
-  height: auto;
 }
 
 .similar-movie-card:hover {
   transform: scale(1.1);
 }
 
+/* .similar-movie-card > a {
+  display: block;
+} */
+
 .similar-movie-image {
-  border-radius: 5px;
   width: 100%;
+  border-radius: 5px;
 }
+
+.similar-movie-image.default {
+  aspect-ratio: 185 / 278;
+}
+
 .similar-movie-card p {
   font-size: 16px;
   margin-top: 5px;

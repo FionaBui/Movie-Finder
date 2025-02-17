@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import axios from "axios";
+import api from "../api";
 import { useRoute } from "vue-router";
 import CardMovie from "../components/CardMovie.vue";
 import Pagination from "../components/Pagination.vue";
@@ -13,12 +13,11 @@ const PAGE_RANGE = 10;
 // Get the keyword from the URL
 const route = useRoute();
 const keywordId = ref(route.query.keyword); // Stores the search query
-const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 
 // Function to fetch movies based on the search keyword
 const fetchItems = async (page) => {
-  const response = await axios.get(
-    `https://api.themoviedb.org/3/search/movie?query=${keywordId.value}&page=${page}&api_key=${apiKey}`
+  const response = await api.get(
+    `search/movie?query=${keywordId.value}&page=${page}`
   );
   items.value = response.data.results; // Sparar filmer i movies-arrayen
   totalPages.value = response.data.total_pages;

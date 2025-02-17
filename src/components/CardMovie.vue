@@ -1,6 +1,9 @@
 <script setup>
 // Tar emot en prop med filmdata
-defineProps(["movie"]);
+const props = defineProps({
+  movie: Object,
+});
+const { movie } = props;
 </script>
 
 <template>
@@ -9,7 +12,7 @@ defineProps(["movie"]);
     <div v-if="movie.poster_path">
       <img
         :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
-        :alt="movie.title || movie.name"
+        :alt="movie.title"
         class="movie-image"
       />
     </div>
@@ -18,7 +21,7 @@ defineProps(["movie"]);
       <img
         src="/assets/No_Image_Available.jpg"
         alt="No Image"
-        class="movie-image"
+        class="movie-image default"
       />
     </div>
     <h4>
@@ -43,5 +46,8 @@ a {
 }
 .movie-image {
   width: 100%;
+}
+.movie-image.default {
+  aspect-ratio: 500 / 750;
 }
 </style>

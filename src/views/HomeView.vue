@@ -1,20 +1,18 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
 import CardMovie from "../components/CardMovie.vue";
 import Pagination from "../components/Pagination.vue";
+import api from "../api";
 
 //Variables to store movie data
 const movies = ref([]);
 const totalPages = ref(0);
 const PAGE_RANGE = 7; // Number of pages to display in pagination
-
-const apiKey = import.meta.env.VITE_TMDB_API_KEY;
-
+const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 // Function to fetch movie data from the API
 const fetchMovies = async (page) => {
-  const response = await axios.get(
-    `https://api.themoviedb.org/3/movie/now_playing?page=${page}&api_key=${apiKey}`
+  const response = await api.get(
+    `https://api.themoviedb.org/3/movie/now_playing?page=${page}?api_key=${API_KEY}`
   );
   movies.value = response.data.results; // Sparar filmer i movies-arrayen
   totalPages.value = response.data.total_pages;
