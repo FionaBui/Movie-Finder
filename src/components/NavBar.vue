@@ -10,8 +10,6 @@ const router = useRouter();
 
 console.log("acount", account);
 
-// Vue Router instance to handle navigation
-
 // Function to handle search and navigate to the search results page
 function handleSearch() {
   router.push(`/search?keyword=${keyword.value}`);
@@ -23,13 +21,23 @@ function handleSearch() {
     });
   }
 }
-
+// Function to fetch user account details from TMDB API
 const fetchAccountDetail = async () => {
   const sessionId = localStorage.getItem("sessionId");
   const accountResponse = await api.get(`/account?session_id=${sessionId}`);
   account.value = accountResponse.data;
 };
-
+// Function to handle user logout
+const handleLogout = async () => {
+  const sessionId = localStorage.getItem("sessionId");
+  await api.delete(`/authentication/session`, {
+    data: { session_id: sessionId },
+  });
+  localStorage.removeItem("sessionId");
+  account.value = null;
+  router.push("/");
+};
+// Watch for changes in the login status and fetch account details when needed
 watch(
   () => route.query.isLogin,
   (isLoginValue) => {
@@ -38,8 +46,7 @@ watch(
     }
   }
 );
-// {"session_id": "55559e82ceba5d04c48edbb38ae793a0582a1307"}
-
+// Fetch user account details when the component is mounted
 onMounted(() => {
   fetchAccountDetail();
 });
@@ -62,11 +69,12 @@ onMounted(() => {
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </div>
+        <!-- Account -->
         <div class="account-container">
           <ul v-if="account">
             <li>
               {{ account.username }}
-              <router-link to="/">Logout</router-link>
+              <button @click="handleLogout" class="btn-logout">Logout</button>
             </li>
           </ul>
           <ul v-else>
@@ -148,5 +156,8 @@ nav li {
 }
 .account-container li {
   color: #f9ab00;
+}
+.btn-logout {
+  color: #ccc;
 }
 </style>
