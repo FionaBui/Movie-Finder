@@ -27,8 +27,7 @@ onMounted(() => {
     <div v-if="movies.length === 0">Loading...</div>
     <div v-else class="movie-container">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
-        <!-- <router-link :to="`/movie/${movie.id}`"> -->
-        <router-link :to="'#'">
+        <router-link :to="`/movie/${movie.id}`">
           <CardMovie :movie="movie" />
         </router-link>
       </div>

@@ -1,54 +1,10 @@
 <script setup>
-import { useRoute } from "vue-router";
-import api from "../api";
-import { onMounted, ref } from "vue";
 // Tar emot en prop med filmdata
 const props = defineProps({
   movie: Object,
 });
-const emit = defineEmits(["fetchData"]);
 
 const { movie } = props;
-const route = useRoute();
-const isAdd = ref(!route.path.includes("favorites"));
-
-const sessionId = localStorage.getItem("sessionId");
-const handleFavorite = async () => {
-  const data = {
-    media_id: movie.id,
-    media_type: "movie",
-    favorite: isAdd.value,
-  };
-  const response = await api.post(
-    `account/{account_id}/favorite?session_id=${sessionId}`,
-    data
-  );
-  if (response.data.success) {
-    let favoriteIds = JSON.parse(localStorage.getItem("favoriteIds")) || [];
-    let totalsFavorite = favoriteIds.length;
-    if (response.data.status_code === 13) {
-      // delete
-      totalsFavorite--;
-      favoriteIds = favoriteIds.filter((id) => id !== movie.id);
-      emit("fetchData", 1);
-      isAdd.value = true;
-    } else {
-      isAdd.value = false;
-      totalsFavorite++;
-      favoriteIds.push(movie.id);
-    }
-    localStorage.setItem("favoriteIds", JSON.stringify(favoriteIds));
-    document.getElementById("totalsFavorite").textContent = totalsFavorite;
-  }
-};
-
-onMounted(() => {
-  const localFavoriteIds =
-    JSON.parse(localStorage.getItem("favoriteIds")) || [];
-  if (localFavoriteIds.includes(movie.id)) {
-    isAdd.value = false;
-  }
-});
 </script>
 
 <template>
@@ -71,9 +27,6 @@ onMounted(() => {
     </div>
     <h4>
       {{ movie.title }}
-      <button v-if="sessionId" class="btn" @click="handleFavorite">
-        {{ isAdd ? "Add" : "Remove" }}
-      </button>
     </h4>
     <p>Release Date: {{ movie.release_date }}</p>
   </div>

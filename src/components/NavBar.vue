@@ -7,7 +7,6 @@ const keyword = ref("");
 const account = ref(null);
 const route = useRoute();
 const router = useRouter();
-const totalsFavorite = ref(0);
 
 // Function to handle search and navigate to the search results page
 function handleSearch() {
@@ -43,22 +42,13 @@ const handleLogout = async () => {
     router.push("/");
   }
 };
-const fetchFavorites = async () => {
-  const sessionId = localStorage.getItem("sessionId");
-  const response = await api.get(
-    `account/{account_id}/favorite/movies?session_id=${sessionId}`
-  );
-  const totalsFavoriteRes = response.data.total_results;
-  totalsFavorite.value = totalsFavoriteRes;
-  // localStorage.setItem("totals_favorite", totalsFavoriteRes);
-};
+
 // Watch for changes in the login status and fetch account details when needed
 watch(
   () => route.query.isLogin,
   (isLoginValue) => {
     if (isLoginValue) {
       fetchAccountDetail();
-      fetchFavorites();
     }
   }
 );
@@ -66,7 +56,6 @@ watch(
 // Fetch user account details when the component is mounted
 onMounted(() => {
   fetchAccountDetail();
-  fetchFavorites();
 });
 </script>
 
@@ -79,12 +68,6 @@ onMounted(() => {
       /></router-link>
       <nav>
         <li><router-link to="/">Home</router-link></li>
-        <li v-if="account">
-          <router-link to="/favorites"
-            >Favorites (<span id="totalsFavorite">{{ totalsFavorite }}</span
-            >)</router-link
-          >
-        </li>
         <!-- Search -->
         <div class="search-container">
           <input type="text" v-model="keyword" @keydown.enter="handleSearch" />
