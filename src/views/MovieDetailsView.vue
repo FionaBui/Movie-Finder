@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import api from "../api";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 // Extract the movie ID from the URL
 const route = useRoute();
+const router = useRouter();
 const movieId = route.params.id;
 
 // Define reactive variables to store movie details
@@ -16,21 +17,19 @@ console.log(movie);
 
 // Function to fetch movie details from the API
 const fetchMovieDetails = async (movieId) => {
-  console.log("begin detail");
-  const movieResponse = await api.get(`movie/${movieId}`);
-  console.log("end detail");
+  try {
+    const movieResponse = await api.get(`movie/${movieId}`);
+    movie.value = movieResponse.data;
+  } catch (err) {
+    router.push("/");
+  }
 
-  movie.value = movieResponse.data;
   // Fetch movie credits
-  console.log("begin credit");
   const creditResponse = await api.get(`movie/${movieId}/credits`);
-  console.log("end credit");
 
   credits.value = creditResponse.data;
   // Fetch similar movies
-  console.log("begin similar");
   const similarResponse = await api.get(`movie/${movieId}/similar`);
-  console.log("end similar");
   similarMovies.value = similarResponse.data.results.slice(0, 8); // Store only the first 8 similar movies
   console.log(similarMovies.value);
 };

@@ -7,8 +7,7 @@ const keyword = ref("");
 const account = ref(null);
 const route = useRoute();
 const router = useRouter();
-
-console.log("acount", account);
+const totalsFavorite = ref(0);
 
 // Function to handle search and navigate to the search results page
 function handleSearch() {
@@ -23,19 +22,35 @@ function handleSearch() {
 }
 // Function to fetch user account details from TMDB API
 const fetchAccountDetail = async () => {
-  const sessionId = localStorage.getItem("sessionId");
-  const accountResponse = await api.get(`/account?session_id=${sessionId}`);
-  account.value = accountResponse.data;
+  try {
+    const sessionId = localStorage.getItem("sessionId");
+    const accountResponse = await api.get(`/account?session_id=${sessionId}`);
+    account.value = accountResponse.data;
+  } catch (err) {
+    localStorage.removeItem("sessionId");
+    account.value = null;
+  }
 };
 // Function to handle user logout
 const handleLogout = async () => {
+  if (confirm("are you sure?")) {
+    const sessionId = localStorage.getItem("sessionId");
+    await api.delete(`/authentication/session`, {
+      data: { session_id: sessionId },
+    });
+    localStorage.removeItem("sessionId");
+    account.value = null;
+    router.push("/");
+  }
+};
+const fetchFavorites = async () => {
   const sessionId = localStorage.getItem("sessionId");
-  await api.delete(`/authentication/session`, {
-    data: { session_id: sessionId },
-  });
-  localStorage.removeItem("sessionId");
-  account.value = null;
-  router.push("/");
+  const response = await api.get(
+    `account/{account_id}/favorite/movies?session_id=${sessionId}`
+  );
+  const totalsFavoriteRes = response.data.total_results;
+  totalsFavorite.value = totalsFavoriteRes;
+  // localStorage.setItem("totals_favorite", totalsFavoriteRes);
 };
 // Watch for changes in the login status and fetch account details when needed
 watch(
@@ -43,12 +58,15 @@ watch(
   (isLoginValue) => {
     if (isLoginValue) {
       fetchAccountDetail();
+      fetchFavorites();
     }
   }
 );
+
 // Fetch user account details when the component is mounted
 onMounted(() => {
   fetchAccountDetail();
+  fetchFavorites();
 });
 </script>
 
@@ -61,7 +79,12 @@ onMounted(() => {
       /></router-link>
       <nav>
         <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/movies">Movies</router-link></li>
+        <li v-if="account">
+          <router-link to="/favorites"
+            >Favorites (<span id="totalsFavorite">{{ totalsFavorite }}</span
+            >)</router-link
+          >
+        </li>
         <!-- Search -->
         <div class="search-container">
           <input type="text" v-model="keyword" @keydown.enter="handleSearch" />
@@ -86,14 +109,6 @@ onMounted(() => {
   </div>
 </template>
 <style>
-body {
-  background-color: black;
-  color: white;
-  margin: 50px 100px;
-  font-family: "Quicksand", serif;
-  overflow: auto;
-}
-
 /* #app {
   min-height: 100vh;
   display: flex;
@@ -135,17 +150,22 @@ nav li {
 }
 /* Search */
 .search-container {
+  display: flex;
   border: 1px;
   background: #2c2c2c;
+  width: 200px;
 }
 .search-container input {
-  width: 150px;
+  width: calc(100% - 30px);
   height: 20px;
   padding: 5px 15px;
   background: transparent;
   color: aliceblue;
   border: 2px solid transparent;
   font-size: 16px;
+}
+.search-container input:focus {
+  outline: none;
 }
 .search-container i {
   font-size: 20px;
@@ -159,5 +179,9 @@ nav li {
 }
 .btn-logout {
   color: #ccc;
+}
+@media (min-width: 768px) {
+}
+@media (min-width: 1200px) {
 }
 </style>

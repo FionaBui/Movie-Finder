@@ -1,0 +1,13 @@
+body {
+  background-color: black;
+  color: white;
+  margin: 50px 100px;
+  font-family: "Quicksand", serif;
+  overflow: auto;
+}
+h1 {
+  color: #f9ab00;
+}
+p {
+  font-size: 18px;
+}

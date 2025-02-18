@@ -3,8 +3,8 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import api from "../api";
 
-const userName = ref("");
-const password = ref("");
+const userName = ref("fionabui");
+const password = ref("fiona123");
 
 const router = useRouter();
 

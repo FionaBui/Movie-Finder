@@ -8,12 +8,9 @@ import api from "../api";
 const movies = ref([]);
 const totalPages = ref(0);
 const PAGE_RANGE = 7; // Number of pages to display in pagination
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 // Function to fetch movie data from the API
 const fetchMovies = async (page) => {
-  const response = await api.get(
-    `https://api.themoviedb.org/3/movie/now_playing?page=${page}?api_key=${API_KEY}`
-  );
+  const response = await api.get(`/movie/now_playing?page=${page}`);
   movies.value = response.data.results; // Sparar filmer i movies-arrayen
   totalPages.value = response.data.total_pages;
 };
@@ -30,7 +27,8 @@ onMounted(() => {
     <div v-if="movies.length === 0">Loading...</div>
     <div v-else class="movie-container">
       <div v-for="movie in movies" :key="movie.id" class="movie-card">
-        <router-link :to="`/movie/${movie.id}`">
+        <!-- <router-link :to="`/movie/${movie.id}`"> -->
+        <router-link :to="'#'">
           <CardMovie :movie="movie" />
         </router-link>
       </div>
