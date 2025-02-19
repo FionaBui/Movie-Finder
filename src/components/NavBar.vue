@@ -10,7 +10,6 @@ const router = useRouter();
 
 // Function to handle search and navigate to the search results page
 function handleSearch() {
-  router.push(`/search?keyword=${keyword.value}`);
   if (keyword.value) {
     // Navigate to the search page with the keyword as a query parameter
     router.push({
