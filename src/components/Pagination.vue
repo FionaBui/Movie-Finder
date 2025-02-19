@@ -32,18 +32,13 @@ const handlePrevPage = () => {
 };
 // Function when change the page
 const handleChangePage = (page) => {
-  console.log("handleChangePage:", page);
-
   currentPage.value = page;
 };
 // Watches changes in currentPage and updates start when needed
 watch(currentPage, () => {
   emit("fetchData", currentPage.value);
-  console.log("watch currentPage", currentPage.value);
-
   // Update the start value if the current page is the first in a new range
   if (currentPage.value % pageRange === 1) {
-    console.log("update start");
     start.value = currentPage.value;
   }
 

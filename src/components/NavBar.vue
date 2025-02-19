@@ -92,12 +92,12 @@ onMounted(() => {
   </div>
 </template>
 <style>
-/* #app {
+#app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-} */
+}
 h1 {
   color: #f9ab00;
 }

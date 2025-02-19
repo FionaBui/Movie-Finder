@@ -147,8 +147,6 @@ p {
   justify-content: left;
   align-items: flex-start;
   gap: 30px;
-  /* padding: 10px 20px;
-  margin: 10px 20px; */
 }
 
 .movie-content img {
@@ -201,10 +199,6 @@ p {
 .similar-movie-card:hover {
   transform: scale(1.1);
 }
-
-/* .similar-movie-card > a {
-  display: block;
-} */
 
 .similar-movie-image {
   width: 100%;

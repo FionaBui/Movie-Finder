@@ -10,7 +10,7 @@ const totalPages = ref(0);
 const PAGE_RANGE = 7; // Number of pages to display in pagination
 // Function to fetch movie data from the API
 const fetchMovies = async (page) => {
-  const response = await api.get(`/movie/now_playing?page=${page}`);
+  const response = await api.get(`/movie/top_rated?page=${page}`);
   movies.value = response.data.results; // Sparar filmer i movies-arrayen
   totalPages.value = response.data.total_pages;
 };
@@ -50,13 +50,10 @@ h1 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  /* padding: 20px; */
 }
 .movie-card {
   width: calc(100% / 3 - 30px);
   text-align: center;
-  /* border: 1px solid; */
-  /* border-radius: 10px; */
   overflow: hidden;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   background: none;
